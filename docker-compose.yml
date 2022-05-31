@@ -1,0 +1,113 @@
+version: "3.8"
+services:
+  n8n-master:
+    image: n8nio/n8n:0.121.0
+    depends_on:
+      - redis
+      - db
+    ports:
+      - 5678:5678
+    environment:
+      - DB_POSTGRESDB_DATABASE=postgres
+      - DB_POSTGRESDB_USER=postgres
+      - DB_POSTGRESDB_PASSWORD=pass
+      - DB_POSTGRESDB_HOST=db
+      - DB_POSTGRESDB_PORT=5432
+      - DB_TYPE=postgresdb
+      - N8N_BASIC_AUTH_PASSWORD=123
+      - N8N_BASIC_AUTH_USER=admin
+      - EXECUTIONS_DATA_MAX_AGE=72
+      - EXECUTIONS_DATA_PRUNE="true"
+      - GENERIC_TIMEZONE=America/Sao_Paulo
+      - N8N_BASIC_AUTH_ACTIVE="true"
+      - N8N_ENCRYPTION_KEY=ae1e030c-2bb1-4175-9028-20c2d87276c5
+      - QUEUE_BULL_REDIS_HOST=redis
+      - QUEUE_BULL_REDIS_PORT=6379
+      - N8N_DISABLE_PRODUCTION_MAIN_PROCESS=true
+      - N8N_SKIP_WEBHOOK_DEREGISTRATION_SHUTDOWN=true
+
+  n8n-worker-1:
+    image: n8nio/n8n:0.121.0
+    depends_on:
+      - redis
+      - db
+      - n8n-master
+    environment:
+      - N8N_ENCRYPTION_KEY=ae1e030c-2bb1-4175-9028-20c2d87276c5
+      - EXECUTIONS_MODE=queue
+      - QUEUE_BULL_REDIS_HOST=redis
+      - QUEUE_BULL_REDIS_PORT=6379
+      - DB_POSTGRESDB_DATABASE=postgres
+      - DB_POSTGRESDB_USER=postgres
+      - DB_POSTGRESDB_PASSWORD=pass
+      - DB_POSTGRESDB_HOST=db
+      - DB_POSTGRESDB_PORT=5432
+      - DB_TYPE=postgresdb
+    command: ["n8n", "worker"]
+
+  n8n-worker-2:
+    image: n8nio/n8n:0.121.0
+    depends_on:
+      - redis
+      - db
+      - n8n-master
+    environment:
+      - N8N_ENCRYPTION_KEY=ae1e030c-2bb1-4175-9028-20c2d87276c5
+      - EXECUTIONS_MODE=queue
+      - QUEUE_BULL_REDIS_HOST=redis
+      - QUEUE_BULL_REDIS_PORT=6379
+      - DB_POSTGRESDB_DATABASE=postgres
+      - DB_POSTGRESDB_USER=postgres
+      - DB_POSTGRESDB_PASSWORD=pass
+      - DB_POSTGRESDB_HOST=db
+      - DB_POSTGRESDB_PORT=5432
+      - DB_TYPE=postgresdb
+    command: ["n8n", "worker", "--concurrency=5"]
+
+  n8n-webhook-1:
+    image: n8nio/n8n:0.121.0
+    depends_on:
+      - redis
+      - db
+      - n8n-master
+    environment:
+      - N8N_ENCRYPTION_KEY=ae1e030c-2bb1-4175-9028-20c2d87276c5
+      - EXECUTIONS_MODE=queue
+      - QUEUE_BULL_REDIS_HOST=redis
+      - QUEUE_BULL_REDIS_PORT=6379
+      - DB_POSTGRESDB_DATABASE=postgres
+      - DB_POSTGRESDB_USER=postgres
+      - DB_POSTGRESDB_PASSWORD=pass
+      - DB_POSTGRESDB_HOST=db
+      - DB_POSTGRESDB_PORT=5432
+      - DB_TYPE=postgresdb
+      - WEBHOOK_URL=ricardo.com
+    command: ["n8n", "webhook"]
+
+  n8n-webhook-2:
+    image: n8nio/n8n:0.121.0
+    depends_on:
+      - redis
+      - db
+      - n8n-master
+    environment:
+      - N8N_ENCRYPTION_KEY=ae1e030c-2bb1-4175-9028-20c2d87276c5
+      - EXECUTIONS_MODE=queue
+      - QUEUE_BULL_REDIS_HOST=redis
+      - QUEUE_BULL_REDIS_PORT=6379
+      - DB_POSTGRESDB_DATABASE=postgres
+      - DB_POSTGRESDB_USER=postgres
+      - DB_POSTGRESDB_PASSWORD=pass
+      - DB_POSTGRESDB_HOST=db
+      - DB_POSTGRESDB_PORT=5432
+      - DB_TYPE=postgresdb
+      - WEBHOOK_URL=ricardo.com
+    command: ["n8n", "webhook"]
+
+  redis:
+    image: redis:latest
+
+  db:
+    image: postgres:10.1-alpine
+    environment:
+      - POSTGRES_PASSWORD=pass
