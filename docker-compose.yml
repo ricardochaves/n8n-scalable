@@ -70,6 +70,8 @@ services:
       - redis
       - db
       - n8n-master
+    ports:
+      - 5679:5678
     environment:
       - N8N_ENCRYPTION_KEY=ae1e030c-2bb1-4175-9028-20c2d87276c5
       - EXECUTIONS_MODE=queue
@@ -81,27 +83,6 @@ services:
       - DB_POSTGRESDB_HOST=db
       - DB_POSTGRESDB_PORT=5432
       - DB_TYPE=postgresdb
-      - WEBHOOK_URL=ricardo.com
-    command: ["n8n", "webhook"]
-
-  n8n-webhook-2:
-    image: n8nio/n8n:0.121.0
-    depends_on:
-      - redis
-      - db
-      - n8n-master
-    environment:
-      - N8N_ENCRYPTION_KEY=ae1e030c-2bb1-4175-9028-20c2d87276c5
-      - EXECUTIONS_MODE=queue
-      - QUEUE_BULL_REDIS_HOST=redis
-      - QUEUE_BULL_REDIS_PORT=6379
-      - DB_POSTGRESDB_DATABASE=postgres
-      - DB_POSTGRESDB_USER=postgres
-      - DB_POSTGRESDB_PASSWORD=pass
-      - DB_POSTGRESDB_HOST=db
-      - DB_POSTGRESDB_PORT=5432
-      - DB_TYPE=postgresdb
-      - WEBHOOK_URL=ricardo.com
     command: ["n8n", "webhook"]
 
   redis:
