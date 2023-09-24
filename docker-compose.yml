@@ -1,7 +1,7 @@
 version: "3.8"
 services:
   n8n-master:
-    image: n8nio/n8n:0.121.0
+    image: n8nio/n8n:1.8.1
     depends_on:
       redis:
         condition: service_healthy
@@ -37,7 +37,7 @@ services:
       timeout: 10s
 
   n8n-worker-1:
-    image: n8nio/n8n:0.121.0
+    image: n8nio/n8n:1.8.1
     depends_on:
       redis:
         condition: service_healthy
@@ -56,11 +56,11 @@ services:
       - DB_POSTGRESDB_HOST=db
       - DB_POSTGRESDB_PORT=5432
       - DB_TYPE=postgresdb
-    command: ["n8n", "worker"]
+    command: ["worker"]
     restart: always
 
   n8n-worker-2:
-    image: n8nio/n8n:0.121.0
+    image: n8nio/n8n:1.8.1
     depends_on:
       redis:
         condition: service_healthy
@@ -79,11 +79,11 @@ services:
       - DB_POSTGRESDB_HOST=db
       - DB_POSTGRESDB_PORT=5432
       - DB_TYPE=postgresdb
-    command: ["n8n", "worker", "--concurrency=5"]
+    command: ["worker", "--concurrency=5"]
     restart: always
 
   n8n-webhook-1:
-    image: n8nio/n8n:0.121.0
+    image: n8nio/n8n:1.8.1
     depends_on:
       redis:
         condition: service_healthy
@@ -104,7 +104,7 @@ services:
       - DB_POSTGRESDB_HOST=db
       - DB_POSTGRESDB_PORT=5432
       - DB_TYPE=postgresdb
-    command: ["n8n", "webhook"]
+    command: ["webhook"]
     restart: always
 
   redis:
